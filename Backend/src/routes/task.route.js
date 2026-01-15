@@ -1,5 +1,5 @@
 import express from 'express'
-import { acceptTask, cancelByRunner, cancelByUser, createTask, getMyAcceptedTasks, getMyActiveTask, getMyCreatedTasks, getOpenTasks, getTaskById, markDelivered, startTask } from '../controllers/task.controller.js';
+import { acceptTask, cancelByRunner, cancelByUser, completeTaskByUser, createTask, getMyAcceptedTasks, getMyActiveTask, getMyCreatedTasks, getOpenTasks, getTaskById, markDelivered, startTask } from '../controllers/task.controller.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -15,6 +15,6 @@ router.patch('/task/:taskId/start',protect, startTask)
 router.patch('/task/:taskId/deliver',protect, markDelivered)
 router.patch('/task/:taskId/cancel/user',protect, cancelByUser)
 router.patch('/task/:taskId/cancel/runner',protect, cancelByRunner)
-
+router.patch('/task/:taskId/complete', protect, completeTaskByUser)
 
 export default router;

@@ -384,3 +384,43 @@ export const getTaskById = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const completeTaskByUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { taskId } = req.params;
+
+    if (req.user.status !== "user") {
+      return res.status(403).json({
+        message: "Only USER can complete the task",
+      });
+    }
+
+    const task = await Task.findOneAndUpdate(
+      {
+        _id: taskId,
+        createdBy: userId,
+        status: "DELIVERED",
+      },
+      {
+        status: "COMPLETED",
+      },
+      { new: true }
+    );
+
+    if (!task) {
+      return res.status(400).json({
+        message: "Task cannot be completed at this stage",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Task marked as completed",
+      task,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

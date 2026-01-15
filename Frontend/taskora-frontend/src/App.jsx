@@ -9,6 +9,9 @@ import VerifyEmail from './pages/auth/Verification'
 import { Toaster } from 'sonner'
 import ProtectedRoute from './components/routes/ProtectedRoute'
 import CreateTask from './pages/user/CreateTask'
+import RunnerTasks from './pages/runner/RunnerTasks'
+import RunnerActiveTask from './pages/runner/RunnerActiveTask'
+import MyTasks from './pages/user/MyTasks'
 
 const App = () => {
   const location = useLocation()
@@ -27,6 +30,10 @@ const App = () => {
               <CreateTask/>
           </ProtectedRoute>
          }/>
+         <Route path='/runner/tasks' element={<RunnerTasks/>}/>
+         <Route path='/runner/active-task' element={<RunnerActiveTask/>}/>
+         <Route path="/my-tasks" element={<MyTasks />} />
+
        </Routes>
 
        {!isAuthPage && <Footer/>}
