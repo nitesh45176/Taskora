@@ -142,9 +142,15 @@ export const login = async (req, res) => {
     }
 
     // 4️⃣ User is verified - directly login without OTP
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      {
+        id: user._id,
+        status: user.status,
+        isRunner: user.isRunner,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     // Return user data (without password)
     const userData = {
@@ -152,6 +158,8 @@ export const login = async (req, res) => {
       name: user.name,
       email: user.email,
       isVerified: user.isVerified,
+      status: user.status,
+      isRunner: user.isRunner,
     };
 
     res.status(200).json({
@@ -159,6 +167,7 @@ export const login = async (req, res) => {
       message: "Login successful",
       user: userData,
       token,
+      
     });
   } catch (error) {
     console.error(error);

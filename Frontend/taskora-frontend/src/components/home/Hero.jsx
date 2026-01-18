@@ -1,9 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import heroBg from "../../assets/Hero-bg.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BecomeRunnerButton from "../../pages/runner/BecomeRunnerButton";
+import { useAuth } from "../../context";
+import LoginRequiredModal from "../common/LoginRequireModal";
 
 const Hero = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+
+  const handleProtectedAction = (callback) => {
+    if (!isAuthenticated) {
+      setShowModal(true);
+      return;
+    }
+    callback();
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0B1220]">
       {/* Background Image */}
@@ -29,18 +43,33 @@ const Hero = () => {
           things done — fast, transparent, and tracked in real time.
         </p>
 
-        {/* CTA Buttons */}
+        {/* CTA */}
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            to="/tasks/create"
-            className="rounded-full bg-blue-500 px-8 py-3 text-white font-medium hover:bg-blue-600 transition"
+          <button
+            onClick={() =>
+              handleProtectedAction(() => navigate("/user/create"))
+            }
+            className="rounded-full cursor-pointer bg-blue-500 px-8 py-3 text-white hover:bg-blue-600 transition"
           >
             Post a Task
-          </Link>
+          </button>
 
-          <BecomeRunnerButton className="border cursor-pointer border-[#1E2A45] text-slate-300 hover:text-white hover:border-blue-500" />
-
+          {/* Become Runner */}
+          <button
+            onClick={() =>
+              handleProtectedAction(() => navigate("/runner"))
+            }
+            className="rounded-full cursor-pointer border border-[#1E2A45] px-8 py-3 text-slate-300 hover:text-white hover:border-blue-500 transition"
+          >
+            Become a Runner
+          </button>
         </div>
+
+        {/* Login Modal */}
+        <LoginRequiredModal
+          open={showModal}
+          onClose={() => setShowModal(false)}
+        />
 
         {/* Stats
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">

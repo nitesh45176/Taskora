@@ -1,4 +1,5 @@
 import Task from "../models/Task.model.js";
+import mongoose from "mongoose";
 
 export const createTask = async (req, res) => {
   try {
@@ -123,7 +124,7 @@ export const acceptTask = async (req, res) => {
       },
       {
         new: true,
-      }
+      },
     );
 
     if (!task) {
@@ -157,7 +158,7 @@ export const startTask = async (req, res) => {
       },
       {
         new: true,
-      }
+      },
     );
 
     if (!task) {
@@ -187,7 +188,7 @@ export const markDelivered = async (req, res) => {
       },
       {
         new: true,
-      }
+      },
     );
 
     if (!task) {
@@ -215,7 +216,7 @@ export const autoCompleteTasks = async () => {
           $lte: new Date(Date.now() - 24 * 60 * 60 * 1000),
         },
       },
-      { status: "COMPLETED" }
+      { status: "COMPLETED" },
     );
   } catch (error) {
     console.error("Auto-complete error:", error);
@@ -237,7 +238,7 @@ export const cancelByUser = async (req, res) => {
         status: "CANCELLED",
         acceptedBy: null,
       },
-      { new: true }
+      { new: true },
     );
 
     if (!task) {
@@ -254,14 +255,13 @@ export const cancelByUser = async (req, res) => {
 };
 
 export const cancelByRunner = async (req, res) => {
-  const runnerId = req.user.id;
   const { taskId } = req.params;
 
   try {
     const task = await Task.findOneAndUpdate(
       {
         _id: taskId,
-        acceptedBy: runnerId,
+        acceptedBy: new mongoose.Types.ObjectId(req.user.id),
         status: "ACCEPTED",
       },
       {
@@ -272,15 +272,21 @@ export const cancelByRunner = async (req, res) => {
     );
 
     if (!task) {
-      return res.status(400).json({ message: "You can't cancel this task" });
+      return res.status(400).json({
+        message: "You can't cancel this task",
+      });
     }
 
-    res.status(200).json({ message: "Task is canceled by runner", task });
+    res.status(200).json({
+      message: "Task cancelled and released",
+      task,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 export const getMyCreatedTasks = async (req, res) => {
   if (req.user.status !== "user") {
@@ -292,8 +298,9 @@ export const getMyCreatedTasks = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const tasks = await Task.find({ createdBy: userId })
-      .sort({ createdAt: -1 });
+    const tasks = await Task.find({ createdBy: userId }).sort({
+      createdAt: -1,
+    });
 
     res.status(200).json({
       success: true,
@@ -305,7 +312,6 @@ export const getMyCreatedTasks = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 export const getMyAcceptedTasks = async (req, res) => {
   if (req.user.status !== "runner") {
@@ -317,8 +323,9 @@ export const getMyAcceptedTasks = async (req, res) => {
   const runnerId = req.user.id;
 
   try {
-    const tasks = await Task.find({ acceptedBy: runnerId })
-      .sort({ updatedAt: -1 });
+    const tasks = await Task.find({ acceptedBy: runnerId }).sort({
+      updatedAt: -1,
+    });
 
     res.status(200).json({
       success: true,
@@ -330,7 +337,6 @@ export const getMyAcceptedTasks = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 export const getMyActiveTask = async (req, res) => {
   if (req.user.status !== "runner") {
@@ -357,18 +363,14 @@ export const getMyActiveTask = async (req, res) => {
   }
 };
 
-
 export const getTaskById = async (req, res) => {
   try {
-    const { taskId } = req.params;
+    const taskId = req.params.id;
     const userId = req.user.id;
 
     const task = await Task.findOne({
       _id: taskId,
-      $or: [
-        { createdBy: userId },
-        { acceptedBy: userId },
-      ],
+      $or: [{ createdBy: userId }, { acceptedBy: userId }],
     }).populate("createdBy acceptedBy", "name email");
 
     if (!task) {
@@ -405,7 +407,7 @@ export const completeTaskByUser = async (req, res) => {
       {
         status: "COMPLETED",
       },
-      { new: true }
+      { new: true },
     );
 
     if (!task) {

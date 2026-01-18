@@ -25,7 +25,7 @@ const WhyTaskora = () => {
     },
   ];
   return (
-    <section className="bg-white py-24">
+    <section id='why' className="bg-white py-24">
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Heading */}

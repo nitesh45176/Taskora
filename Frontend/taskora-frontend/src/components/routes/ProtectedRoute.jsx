@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children, allowed }) => {
 
   // 🔒 Not logged in
   if (!token || !user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // 🔐 Role-based protection

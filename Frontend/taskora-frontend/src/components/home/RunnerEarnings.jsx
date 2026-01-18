@@ -24,7 +24,7 @@ const RunnerEarnings = () => {
     },
   ];
   return (
-     <section className="bg-blue-50 py-24">
+     <section id='Earnings' className="bg-blue-50 py-24">
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Heading */}

@@ -2,7 +2,7 @@
 
 const RunnerConfirmModal = ({ onConfirm, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div className="fixed inset-0 mt-72 bg-black/60 flex items-center justify-center z-50">
       <div className="bg-[#121A2B] border border-[#1E2A45] rounded-2xl p-8 max-w-md text-center">
         <h2 className="text-2xl font-bold text-white mb-3">
           Switch to Runner Mode?

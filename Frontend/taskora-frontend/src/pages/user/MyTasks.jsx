@@ -73,40 +73,77 @@ const MyTasks = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1220] p-10 pt-40">
-      <h1 className="text-3xl font-bold text-white mb-8">My Tasks</h1>
+  <div className="min-h-screen bg-[#0B1220] pt-32 px-6 flex justify-center">
+    <div className="w-full max-w-6xl">
 
-      <div className="space-y-4">
+      {/* Header */}
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold text-white">My Tasks</h1>
+        <p className="text-slate-400 mt-1">
+          Track all tasks you’ve posted and their progress
+        </p>
+        
+      </div>
+      <Link
+          to="/user"
+          className="inline-flex items-center text-slate-400 hover:text-white mb-4"
+        >
+          ← Back to Dashboard
+        </Link>
+
+      <div className="space-y-5">
         {tasks.map((task) => (
           <div
             key={task._id}
-            className="bg-[#121A2B] border border-[#1E2A45] rounded-xl p-6 flex justify-between items-center"
+            className="bg-[#121A2B] border border-[#1E2A45] rounded-2xl p-6 flex flex-col md:flex-row md:items-center md:justify-between hover:border-blue-500/30 transition"
           >
+            {/* Left */}
             <div>
-              <h3 className="text-lg text-white font-semibold">{task.title}</h3>
-              <p className="text-slate-400 text-sm">
+              <h3 className="text-xl text-white font-semibold">
+                {task.title}
+              </h3>
+
+              <p className="text-slate-400 text-sm mt-1">
                 {task.pickupLocation.masked} → {task.dropLocation.masked}
               </p>
+
+              <div className="mt-3">
+                <StatusBadge status={task.status} />
+              </div>
             </div>
 
-            <div className="text-right">
-              <p className="text-slate-400 text-sm mt-1">₹ {task.price}</p>
-              <StatusBadge status={task.status} />
+            {/* Right */}
+            <div className="mt-6 md:mt-0 flex flex-col items-end gap-3 text-right">
+              <p className="text-white font-semibold">
+                ₹ {task.price}
+              </p>
 
-              {task.status === "DELIVERED" && (
-                <button
-                  onClick={() => markCompleted(task._id)}
-                  className="mt-2 bg-green-500 hover:bg-green-600 cursor-pointer text-white px-4 py-1 rounded-lg text-sm"
+              <div className="flex items-center gap-4">
+                <Link
+                  to={`/user/task/${task._id}`}
+                  className="text-blue-400 hover:text-blue-300 text-sm"
                 >
-                  Confirm Completion
-                </button>
-              )}
+                  View details →
+                </Link>
+
+                {task.status === "DELIVERED" && (
+                  <button
+                    onClick={() => markCompleted(task._id)}
+                    className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-xl text-white text-sm font-medium transition"
+                  >
+                    Confirm Completion
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ))}
       </div>
+
     </div>
-  );
+  </div>
+);
+
 };
 
 export default MyTasks;

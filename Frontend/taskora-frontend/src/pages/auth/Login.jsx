@@ -27,42 +27,45 @@ const Login = () => {
       return;
     }
 
-    try {
-      setIsLoading(true);
+try {
+  setIsLoading(true);
 
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
-        email,
-        password,
-      });
+  const res = await axios.post("http://localhost:5000/api/auth/login", {
+    email,
+    password,
+  });
 
-      // Check if we have user and token before calling login
-      if (res.data.user && res.data.token) {
-        login(res.data.user, res.data.token);
-        toast.success("Login successful!");
-        navigate("/");
-      } else {
-        // If no user/token, maybe it's an OTP flow
-        toast.info(res.data.message);
-      }
-    } catch (error) {
-      const status = error.response?.status;
-      const data = error.response?.data;
+  const user = res.data.user;
+  const token = res.data.token;
 
-      if (status === 403) {
-        toast.error(data.message || "Please verify your email");
-        navigate("/verify-email", {
-          state: { email: email }, // ✅ Pass email in state
-        });
-      } else if (status === 401) {
-        toast.error("Incorrect email or password");
-      } else {
-        toast.error("Login failed");
-      }
-    } finally {
-      setIsLoading(false);
+    // Save to context + localStorage
+    login(user, token);
+
+    toast.success("Login successful!");
+
+    // Redirect based on role
+    if (user.status === "runner") {
+      navigate("/runner");
+    } else {
+      navigate("/user");
     }
-  };
 
+  } catch (error) {
+    const status = error.response?.status;
+    const data = error.response?.data;
+
+    if (status === 403) {
+      toast.error(data.message || "Please verify your email");
+      navigate("/verify-email", { state: { email } });
+    } else if (status === 401) {
+      toast.error("Incorrect email or password");
+    } else {
+      toast.error("Login failed");
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
   return (
     <AuthLayout>
       <div className="lg:w-[70%] h-full flex flex-col justify-center px-8 md:px-12">

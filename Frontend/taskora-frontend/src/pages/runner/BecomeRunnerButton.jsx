@@ -5,9 +5,9 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import RunnerConfirmModal from "../../components/common/RunnerConfirmModal";
 
-const BecomeRunnerButton = ({className}) => {
+const BecomeRunnerButton = ({ className }) => {
   const [showModal, setShowModal] = useState(false);
-  const { user } = useAuth();
+  const { user ,setUser} = useAuth();
   const navigate = useNavigate();
 
   const handleConfirm = async () => {
@@ -28,8 +28,10 @@ const BecomeRunnerButton = ({className}) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      const updatedUser = { ...user, isRunner: true, status: "runner" };
+      const updatedUser = { ...user, status: "runner", isRunner: true };
       localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      navigate("/runner/active");
 
       toast.success("You're now a Runner 🎉");
       navigate("/runner/tasks");

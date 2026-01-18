@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import StatusBadge from "../../components/common/StatusBadge";
+import { useAuth } from "../../context";
 
 const RunnerTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
 
   const fetchTasks = async () => {
     try {
@@ -18,7 +21,7 @@ const RunnerTasks = () => {
 
       setTasks(res.data.tasks);
     } catch (error) {
-      console.error(error)
+      console.error(error);
       toast.error("Failed to load tasks");
     } finally {
       setLoading(false);
@@ -38,7 +41,12 @@ const RunnerTasks = () => {
       );
 
       toast.success("Task accepted!");
-      window.location.href = "/runner/active-task";
+
+      const updatedUser = { ...user, status: "runner" };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+
+      navigate("/runner/active"); // ✅ correct navigation
     } catch (err) {
       toast.error(err.response?.data?.message || "Cannot accept task");
     }
@@ -60,8 +68,8 @@ const RunnerTasks = () => {
         </h2>
 
         <p className="text-slate-400 max-w-md mb-8">
-          There are no open tasks right now.  
-          Check back in a few minutes — new tasks appear as users post them.
+          There are no open tasks right now. Check back in a few minutes — new
+          tasks appear as users post them.
         </p>
 
         <Link
@@ -74,41 +82,46 @@ const RunnerTasks = () => {
     );
   }
 
-
   return (
-    <div className="min-h-screen bg-[#0B1220] p-10 pt-40">
-      <h1 className="text-3xl font-bold text-white mb-8">Open Tasks</h1>
+    <>
+      <div className="min-h-screen bg-[#0B1220] p-10 pt-40">
+        <h1 className="text-3xl font-bold text-white mb-8">Open Tasks</h1>
+        <Link
+          to="/runner"
+          className="inline-flex items-center text-slate-400 hover:text-white mb-4"
+        >
+          ← Back to Dashboard
+        </Link>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tasks.map((task) => (
-          <div
-            key={task._id}
-            className="bg-[#121A2B] border border-[#1E2A45] rounded-xl p-6"
-          >
-            <h3 className="text-xl text-white font-semibold">
-              {task.title}
-            </h3>
-            <StatusBadge status={task.status} />
-
-            <p className="text-slate-400 text-sm mt-2">
-              {task.pickupLocation.masked} → {task.dropLocation.masked}
-            </p>
-
-            <div className="flex justify-between text-slate-300 mt-4">
-              <span>₹ {task.price}</span>
-              <span>{new Date(task.deadline).toLocaleString()}</span>
-            </div>
-
-            <button
-              onClick={() => acceptTask(task._id)}
-              className="mt-5 w-full cursor-pointer bg-blue-500 py-2 rounded-lg text-white hover:bg-blue-600"
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tasks.map((task) => (
+            <div
+              key={task._id}
+              className="bg-[#121A2B] border border-[#1E2A45] rounded-xl p-6"
             >
-              Accept Task
-            </button>
-          </div>
-        ))}
+              <h3 className="text-xl text-white font-semibold">{task.title}</h3>
+              <StatusBadge status={task.status} />
+
+              <p className="text-slate-400 text-sm mt-2">
+                {task.pickupLocation.masked} → {task.dropLocation.masked}
+              </p>
+
+              <div className="flex justify-between text-slate-300 mt-4">
+                <span>₹ {task.price}</span>
+                <span>{new Date(task.deadline).toLocaleString()}</span>
+              </div>
+
+              <button
+                onClick={() => acceptTask(task._id)}
+                className="mt-5 w-full cursor-pointer bg-blue-500 py-2 rounded-lg text-white hover:bg-blue-600"
+              >
+                Accept Task
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
