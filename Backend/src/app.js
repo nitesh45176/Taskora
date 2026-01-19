@@ -11,22 +11,26 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://taskora-v9jk.vercel.app", 
+  "https://taskora-ygjk.vercel.app",
 ];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
+      if (!origin) return callback(null, true); 
       if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
+        callback(null, true);
       } else {
-        return callback(new Error("Not allowed by CORS"));
+        callback(new Error("CORS not allowed"));
       }
     },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+app.options("*", cors());
+
 
 app.use(express.json());
 
