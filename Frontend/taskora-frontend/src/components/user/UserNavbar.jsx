@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/UseAuth";
 import { toast } from "sonner";
 import BecomeRunnerButton from "../../pages/runner/BecomeRunnerButton";
 import ConfirmModal from "../common/ConfirmModal";
 import { useState } from "react";
 import api from "../../utils/axios";
+import { useAuth } from "../../context";
 
 const UserNavbar = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
