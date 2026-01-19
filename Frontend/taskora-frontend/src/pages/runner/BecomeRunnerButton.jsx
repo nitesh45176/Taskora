@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useAuth } from "../../context/UseAuth";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import RunnerConfirmModal from "../../components/common/RunnerConfirmModal";
 import api from "../../utils/axios";
+import { useAuth } from "../../context";
 
 const BecomeRunnerButton = ({ className }) => {
   const [showModal, setShowModal] = useState(false);
