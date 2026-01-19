@@ -29,7 +29,6 @@ app.use(
     credentials: true,
   })
 );
-app.options("*", cors());
 
 
 app.use(express.json());
@@ -41,4 +40,3 @@ app.use("/api/user", userRoutes)
 export default app;
 
 
-//usertoken:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWQwNWJhNWNjNDI0NmYyYWY4MTBiYiIsImlhdCI6MTc2Nzg4Mzk5NCwiZXhwIjoxNzY4NDg4Nzk0fQ.f38ZmVAXmlzj2lnauAKUcuPIBGop06zdJ45xo4bU8RM
