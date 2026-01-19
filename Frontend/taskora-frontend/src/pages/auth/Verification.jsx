@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import axios from "axios";
+import api from "../../utils/axios";
 
 const VerifyEmail = () => {
   const [otp, setOtp] = useState("");
@@ -17,12 +17,12 @@ const VerifyEmail = () => {
     try {
       setIsLoading(true);
       
-      // ✅ Get email from React Router state OR URL params OR localStorage
+      // Get email from React Router state OR URL params OR localStorage
       const email = location.state?.email || 
                     new URLSearchParams(window.location.search).get("email") ||
                     localStorage.getItem('verificationEmail');
       
-      // ✅ Validate email exists
+      // Validate email exists
       if (!email) {
         toast.error("Email not found. Please sign up again.");
         navigate('/signup');
@@ -31,7 +31,7 @@ const VerifyEmail = () => {
       
       console.log('Sending request:', { email, otp, purpose: "SIGNUP" });
 
-      const response = await axios.post("http://localhost:5000/api/auth/verify-otp", {
+      const response = await api.post("/api/auth/verify-otp", {
         email,
         otp,
         purpose: "SIGNUP",
@@ -44,7 +44,7 @@ const VerifyEmail = () => {
     } catch (error) {
       console.error('❌ Full error:', error.response?.data);
 
-      if (axios.isAxiosError(error)) {
+      if (api.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "OTP verification failed");
       } else {
         toast.error("Something went wrong. Please try again.");

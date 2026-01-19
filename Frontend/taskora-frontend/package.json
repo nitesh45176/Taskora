@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "aos": "^2.3.4",
     "axios": "^1.13.2",
     "framer-motion": "^12.26.2",
     "lucide-react": "^0.562.0",
@@ -18,6 +19,7 @@
     "react-dom": "^18.3.1",
     "react-icons": "^5.5.0",
     "react-router-dom": "^6.30.3",
+    "react-simple-typewriter": "^5.0.1",
     "sonner": "^2.0.7",
     "tailwindcss": "^4.1.18",
     "toast": "^0.5.4"

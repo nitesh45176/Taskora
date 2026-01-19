@@ -1,29 +1,21 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context";
-import axios from "axios";
 import { toast } from "sonner";
 import ConfirmModal from "../common/ConfirmModal";
+import api from "../../utils/axios";
 
 const RunnerNavbar = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showSwitchModal, setShowSwitchModal] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
- 
-
   const switchToUser = async () => {
     try {
-      const token = localStorage.getItem("token");
 
-      await axios.patch(
-        "http://localhost:5000/api/user/switch-role",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      await api.patch(
+        "/api/user/switch-role",
       );
 
       const updatedUser = { ...user, status: "user" };
@@ -64,23 +56,40 @@ const RunnerNavbar = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
-          <span className="hidden sm:block text-slate-400 text-sm">
-            Runner: {user?.name}
-          </span>
-
+        <div className="flex items-center gap-2">
+          {/* Switch Role */}
           <button
-            onClick={() => setShowLogoutModal(true)}
-            className="rounded-full border border-red-500/60 cursor-pointer hover:bg-red-500/10 px-5 py-2 text-red-400"
-          >
-            Logout
-          </button>
-          <button
-            onClick={switchToUser}
-            className="rounded-full border border-yellow-500/60 px-5 py-2 text-sm font-medium text-yellow-400 hover:bg-yellow-500/10 transition"
+            onClick={() => {
+              setShowSwitchModal(true);
+            }}
+            className="rounded-full border border-blue-500/50 px-4 py-1.5 text-sm text-blue-400 hover:bg-blue-500/10 transition"
           >
             Switch to User
           </button>
+
+          {/* Divider */}
+          <div className="hidden sm:block h-6 w-px bg-[#1E2A45]" />
+
+          {/* Avatar Menu */}
+          <div className="relative group">
+            <div className="h-9 w-9 flex items-center justify-center rounded-full bg-[#1E2A45] text-white font-semibold cursor-pointer">
+              {user?.name?.[0]?.toUpperCase()}
+            </div>
+
+            {/* Dropdown */}
+            <div className="absolute right-0 mt-2 w-44 rounded-xl bg-[#0B1220] border border-[#1E2A45] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+              <p className="px-4 py-2 text-sm text-slate-400">
+                Runner: {user?.name}
+              </p>
+
+              <button
+                onClick={() => setShowLogoutModal(true)}
+                className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
 
           <ConfirmModal
             open={showLogoutModal}
@@ -93,6 +102,15 @@ const RunnerNavbar = () => {
               logout();
               navigate("/");
             }}
+          />
+
+          <ConfirmModal
+            open={showSwitchModal}
+            title="Switch to User mode?"
+            description="You’ll return to managing and posting tasks."
+            confirmText="Yes, Switch"
+            onCancel={() => setShowSwitchModal(false)}
+            onConfirm={switchToUser}
           />
         </div>
       </div>

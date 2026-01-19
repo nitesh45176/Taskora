@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import StatusBadge from "../../components/common/StatusBadge";
 import { useAuth } from "../../context";
+import api from "../../utils/axios";
 
 const RunnerTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -13,7 +13,7 @@ const RunnerTasks = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/tasks/task", {
+      const res = await api.get("/api/tasks/task", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -30,8 +30,8 @@ const RunnerTasks = () => {
 
   const acceptTask = async (taskId) => {
     try {
-      await axios.patch(
-        `http://localhost:5000/api/tasks/task/${taskId}/accept`,
+      await api.patch(
+        `/api/tasks/task/${taskId}/accept`,
         {},
         {
           headers: {
@@ -46,7 +46,7 @@ const RunnerTasks = () => {
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUser(updatedUser);
 
-      navigate("/runner/active"); // ✅ correct navigation
+      navigate("/runner/active"); 
     } catch (err) {
       toast.error(err.response?.data?.message || "Cannot accept task");
     }

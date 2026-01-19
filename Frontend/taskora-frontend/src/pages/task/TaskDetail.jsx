@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { toast } from "sonner";
 import StatusBadge from "../../components/common/StatusBadge";
 import { useAuth } from "../../context";
 import TaskProgress from "../../components/common/TaskProgress";
 import ConfirmModal from "../../components/common/ConfirmModal";
+import api from "../../utils/axios";
 
 const TaskDetail = () => {
   const { id } = useParams();
@@ -17,13 +17,8 @@ const TaskDetail = () => {
 
   const fetchTask = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/tasks/task/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
+      const res = await api.get(
+        `/api/tasks/task/${id}`
       );
 
       setTask(res.data.task);
@@ -37,12 +32,8 @@ const TaskDetail = () => {
 
   const startTask = async () => {
     try {
-      await axios.patch(
-        `http://localhost:5000/api/tasks/task/${id}/start`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        },
+      await api.patch(
+        `/api/tasks/task/${id}/start`
       );
       toast.success("Task started");
       fetchTask();
@@ -53,12 +44,8 @@ const TaskDetail = () => {
 
   const markDelivered = async () => {
     try {
-      await axios.patch(
-        `http://localhost:5000/api/tasks/task/${id}/deliver`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        },
+      await api.patch(
+        `/api/tasks/task/${id}/deliver`
       );
       toast.success("Marked as delivered");
       fetchTask();
@@ -69,12 +56,8 @@ const TaskDetail = () => {
 
   const confirmCompletion = async () => {
     try {
-      await axios.patch(
-        `http://localhost:5000/api/tasks/task/${id}/complete`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        },
+      await api.patch(
+        `/api/tasks/task/${id}/complete`
       );
       toast.success("Task completed 🎉");
       fetchTask();
@@ -84,17 +67,9 @@ const TaskDetail = () => {
   };
 
   const cancelTaskByUser = async () => {
-    if (!window.confirm("Cancel this task?")) return;
-
     try {
-      await axios.patch(
-        `http://localhost:5000/api/tasks/task/${id}/cancel/user`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
+      await api.patch(
+        `/api/tasks/task/${id}/cancel/user`
       );
 
       toast.success("Task cancelled");
@@ -106,18 +81,9 @@ const TaskDetail = () => {
   };
 
   const cancelTaskByRunner = async () => {
-    if (!window.confirm("Cancel this task and release it back to marketplace?"))
-      return;
-
     try {
-      await axios.patch(
-        `http://localhost:5000/api/tasks/task/${id}/cancel/runner`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
+      await api.patch(
+        `/api/tasks/task/${id}/cancel/runner`
       );
 
       toast.success("Task cancelled");
@@ -197,8 +163,8 @@ const TaskDetail = () => {
           {/* RUNNER CANCEL */}
           {user?.status === "runner" && task.status === "ACCEPTED" && (
             <button
-              onClick={cancelTaskByRunner}
-              className="w-full border border-orange-500/60 text-orange-400 hover:bg-orange-500/10 py-3 rounded-xl font-medium transition"
+              onClick={() => setShowCancelModal(true)}
+              className="w-full border border-orange-500/60 text-orange-400 hover:bg-orange-500/10 py-3 rounded-xl"
             >
               ⚠ Cancel & Release Task
             </button>
@@ -220,6 +186,18 @@ const TaskDetail = () => {
             onConfirm={async () => {
               setShowCancelModal(false);
               await cancelTaskByUser();
+            }}
+          />
+          <ConfirmModal
+            open={showCancelModal}
+            title="Cancel Task?"
+            description="Do you want to delete the task?"
+            confirmText="Yes, Cancel"
+            danger
+            onCancel={() => setShowCancelModal(false)}
+            onConfirm={async () => {
+              setShowCancelModal(false);
+              await cancelTaskByRunner();
             }}
           />
         </div>

@@ -61,7 +61,7 @@ export const verifyOtp = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    // ✅ FIX: Compare Date objects properly
+    // Compare Date objects 
     if (new Date(otpRecord.expiresAt) < new Date()) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
@@ -100,18 +100,18 @@ export const login = async (req, res) => {
   try {
     const user = await User.findOne({ email });
 
-    // 1️⃣ User not found
+    // User not found
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // 2️⃣ Check password FIRST
+    // Check password FIRST
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // 3️⃣ Check verification AFTER password match
+    // Check verification AFTER password match
     if (!user.isVerified) {
       // Remove old signup OTPs
       await Otp.deleteMany({ email, purpose: "SIGNUP" });
@@ -141,7 +141,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // 4️⃣ User is verified - directly login without OTP
+    //  User is verified - directly login without OTP
     const token = jwt.sign(
       {
         id: user._id,

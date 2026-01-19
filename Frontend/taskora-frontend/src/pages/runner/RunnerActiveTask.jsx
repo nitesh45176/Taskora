@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import StatusBadge from "../../components/common/StatusBadge";
+import api from "../../utils/axios";
 
 const RunnerActiveTask = () => {
   const [task, setTask] = useState(null);
@@ -10,8 +10,8 @@ const RunnerActiveTask = () => {
 
   const fetchTask = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/tasks/task/my-active",
+      const res = await api.get(
+        "/api/tasks/task/my-active",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -30,14 +30,8 @@ const RunnerActiveTask = () => {
 
   const startTask = async () => {
     try {
-      await axios.patch(
-        `http://localhost:5000/api/tasks/task/${task._id}/start`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+      await api.patch(
+        `/api/tasks/task/${task._id}/start`
       );
       toast.success("Task started");
       fetchTask();
@@ -48,14 +42,8 @@ const RunnerActiveTask = () => {
 
   const markDelivered = async () => {
     try {
-      await axios.patch(
-        `http://localhost:5000/api/tasks/task/${task._id}/deliver`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+      await api.patch(
+        `/api/tasks/task/${task._id}/deliver`
       );
       toast.success("Task delivered");
       fetchTask();
@@ -110,7 +98,6 @@ const RunnerActiveTask = () => {
   return (
     <div className="min-h-screen bg-[#0B1220] pt-32 px-6 flex justify-center">
       <div className="w-full max-w-3xl">
-        {/* Header */}
         <div className="mb-8">
           <Link
             to="/runner"

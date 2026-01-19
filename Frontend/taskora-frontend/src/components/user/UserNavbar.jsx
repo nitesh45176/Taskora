@@ -1,29 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/UseAuth";
 import { toast } from "sonner";
-import axios from "axios";
 import BecomeRunnerButton from "../../pages/runner/BecomeRunnerButton";
 import ConfirmModal from "../common/ConfirmModal";
 import { useState } from "react";
+import api from "../../utils/axios";
 
 const UserNavbar = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
+  const [showSwitchModal, setShowSwitchModal] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-
   const switchToRunner = async () => {
     try {
-      const token = localStorage.getItem("token");
 
-      await axios.patch(
-        "http://localhost:5000/api/user/switch-role",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      await api.patch(
+        "/api/user/switch-role"
       );
 
       // update localStorage user
@@ -41,24 +35,15 @@ const UserNavbar = () => {
 
   const handleBecomeRunner = async () => {
     try {
-      const token = localStorage.getItem("token");
 
       // 1. Create runner account
-      await axios.post(
-        "http://localhost:5000/api/user/apply-runner",
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+      await api.post(
+        "/api/user/apply-runner",
       );
 
       // 2. Switch role
-      await axios.patch(
-        "http://localhost:5000/api/user/switch-role",
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+      await api.patch(
+        "/api/user/switch-role"
       );
 
       // 3. Update local user
@@ -121,34 +106,53 @@ const UserNavbar = () => {
           ) : (
             <>
               {/* Actions */}
-              <div className="flex items-center gap-3">
-                <span className="hidden sm:block text-slate-400 text-sm">
-                  Hi, {user?.name}
-                </span>
-
-                <button
-                  onClick={() => setShowLogoutModal(true)}
-                  className="rounded-full border border-red-500/60 cursor-pointer hover:bg-red-500/10 px-5 py-2 text-red-400"
-                >
-                  Logout
-                </button>
-
+              <div className="flex items-center gap-2">
+                {/* Primary CTA */}
                 {user?.status === "user" && user?.isRunner === false && (
                   <BecomeRunnerButton
                     onClick={handleBecomeRunner}
-                    className="border cursor-pointer border-[#1E2A45] text-slate-300 hover:text-white hover:border-blue-500"
+                    className="rounded-full border border-blue-500/50 px-4 py-1.5 text-sm text-blue-400 hover:bg-blue-500/10 transition"
                   />
                 )}
 
                 {user?.status === "user" && user?.isRunner === true && (
                   <button
-                    onClick={switchToRunner}
-                    className="rounded-full border border-green-500 px-4 py-2 text-green-400 hover:bg-green-500/10"
+                    onClick={() => {
+                      setOpenMenu(false);
+                      setShowSwitchModal(true);
+                    }}
+                    className="rounded-full border border-green-500/50 px-4 py-1.5 text-sm text-green-400 hover:bg-green-500/10"
                   >
                     Switch to Runner
                   </button>
                 )}
 
+             {/* Divider */}
+          <div className="hidden sm:block h-6 w-px bg-[#1E2A45]" />
+
+          {/* Avatar Menu */}
+          <div className="relative group">
+            <div className="h-9 w-9 flex items-center justify-center rounded-full bg-[#1E2A45] text-white font-semibold cursor-pointer">
+              {user?.name?.[0]?.toUpperCase()}
+            </div>
+
+            {/* Dropdown */}
+            <div className="absolute right-0 mt-2 w-44 rounded-xl bg-[#0B1220] border border-[#1E2A45] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+              <p className="px-4 py-2 text-sm text-slate-400">
+                User: {user?.name}
+              </p>
+
+              <button
+                onClick={() => setShowLogoutModal(true)}
+                className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10"
+              >
+                Logout
+              </button>
+            </div>
+          
+                </div>
+
+                {/* Modals */}
                 <ConfirmModal
                   open={showLogoutModal}
                   title="Logout?"
@@ -160,10 +164,19 @@ const UserNavbar = () => {
                     logout();
                     navigate("/");
                   }}
-                  
                 />
-                
-                
+
+                <ConfirmModal
+                  open={showSwitchModal}
+                  title="Switch to Runner mode?"
+                  description="You’ll see tasks available to earn and manage your active work."
+                  confirmText="Yes, Switch"
+                  onCancel={() => setShowSwitchModal(false)}
+                  onConfirm={async () => {
+                    setShowSwitchModal(false);
+                    await switchToRunner();
+                  }}
+                />
               </div>
             </>
           )}

@@ -3,7 +3,7 @@ import AuthLayout from "../../components/layout/AuthLayout";
 import { validEmail } from "../../utils/helper";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/common/Input";
-import axios from "axios";
+import api from "../../utils/axios";
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -41,7 +41,7 @@ const Register = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/auth/signup", form);
+      await api.post("/api/auth/signup", form);
 
       navigate("/verify-email", {
         state: { email: form.email },

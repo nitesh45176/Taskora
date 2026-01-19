@@ -1,4 +1,3 @@
-import React from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./components/common/Navbar";
@@ -17,7 +16,8 @@ import UserDashboard from "./pages/user/UserDashboard";
 import RunnerDashboard from "./pages/runner/RunnerDashboard";
 import UserLayout from "./components/layout/UserLayout";
 import RunnerLayout from "./components/layout/RunnerLayout";
-import AuthGate from "./components/routes/AuthGates";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const App = () => {
   const location = useLocation();
@@ -34,8 +34,13 @@ const App = () => {
     );
   }
 
+
+
+ 
+
   return (
     <div>
+      
       {/* Show main navbar only on public pages */}
       {!isAuthPage &&
         !location.pathname.startsWith("/user") &&
@@ -83,12 +88,15 @@ const App = () => {
         <Route path="/home" element={<Home />} />
       </Routes>
 
+      
+
       {!isAuthPage &&
         !location.pathname.startsWith("/user") &&
         !location.pathname.startsWith("/runner") && <Footer />}
 
       <Toaster richColors />
     </div>
+    
   );
 };
 

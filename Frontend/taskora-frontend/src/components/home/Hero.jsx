@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import heroBg from "../../assets/Hero-bg.png";
 import { Link, useNavigate } from "react-router-dom";
-import BecomeRunnerButton from "../../pages/runner/BecomeRunnerButton";
 import { useAuth } from "../../context";
 import LoginRequiredModal from "../common/LoginRequireModal";
+import { Typewriter } from "react-simple-typewriter";
 
 const Hero = () => {
   const { isAuthenticated } = useAuth();
@@ -33,12 +33,19 @@ const Hero = () => {
 
       {/* Content */}
       <div className="relative z-10 max-w-5xl px-6 text-center mt-30">
-        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight font-heading">
-          Post Tasks. Get Them Done. <br />
-          <span className="text-blue-500">Track Everything.</span>
+        <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight font-heading ">
+          <Typewriter
+            words={["Post Tasks.", "Get Them Done.", "Track Everything."]}
+            loop
+            cursor
+            cursorStyle="|"
+            typeSpeed={80}
+            deleteSpeed={50}
+            delaySpeed={1500}
+          />
         </h1>
 
-        <p className="mt-6 text-lg text-slate-300 max-w-2xl mx-auto">
+        <p className="mt-6 text-lg text-slate-300 max-w-2xl font-body mx-auto">
           Taskora connects users who need help with trusted runners who get
           things done — fast, transparent, and tracked in real time.
         </p>
@@ -56,9 +63,7 @@ const Hero = () => {
 
           {/* Become Runner */}
           <button
-            onClick={() =>
-              handleProtectedAction(() => navigate("/runner"))
-            }
+            onClick={() => handleProtectedAction(() => navigate("/runner"))}
             className="rounded-full cursor-pointer border border-[#1E2A45] px-8 py-3 text-slate-300 hover:text-white hover:border-blue-500 transition"
           >
             Become a Runner

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import axios from "axios";
 import { useAuth } from "../../context/UseAuth";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import RunnerConfirmModal from "../../components/common/RunnerConfirmModal";
+import api from "../../utils/axios";
 
 const BecomeRunnerButton = ({ className }) => {
   const [showModal, setShowModal] = useState(false);
@@ -12,20 +12,16 @@ const BecomeRunnerButton = ({ className }) => {
 
   const handleConfirm = async () => {
     try {
-      const token = localStorage.getItem("token");
 
       if (!user.isRunner) {
-        await axios.post(
-          "http://localhost:5000/api/user/apply-runner",
-          {},
-          { headers: { Authorization: `Bearer ${token}` } }
+        await api.post(
+          "/api/user/apply-runner",
+         
         );
       }
 
-      await axios.patch(
-        "http://localhost:5000/api/user/switch-role",
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
+      await api.patch(
+        "/api/user/switch-role"
       );
 
       const updatedUser = { ...user, status: "runner", isRunner: true };

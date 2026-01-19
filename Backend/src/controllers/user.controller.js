@@ -86,3 +86,23 @@ export const switchRole = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+
+export const getRunnerStats = async (req, res) => {
+  const runnerId = req.user.id;
+
+  const completedTasks = await Task.find({
+    acceptedBy: runnerId,
+    status: "COMPLETED",
+  });
+
+  const totalEarnings = completedTasks.reduce(
+    (sum, task) => sum + task.price,
+    0
+  );
+
+  res.json({
+    completedCount: completedTasks.length,
+    totalEarnings,
+  });
+};

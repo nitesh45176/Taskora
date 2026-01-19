@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { toast } from "sonner";
+import api from "../../utils/axios";
 
 const CreateTask = () => {
   const [loading, setLoading] = useState(false);
@@ -26,8 +26,8 @@ const CreateTask = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        "http://localhost:5000/api/tasks",
+      await api.post(
+        "/api/tasks",
         {
           title: form.title,
           description: form.description,

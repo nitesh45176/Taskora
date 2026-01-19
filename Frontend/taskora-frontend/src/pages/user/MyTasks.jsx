@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import StatusBadge from "../../components/common/StatusBadge";
+import api from "../../utils/axios";
 
 const MyTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -10,13 +10,8 @@ const MyTasks = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/tasks/task/my-created",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+      const res = await api.get(
+        "/api/tasks/task/my-created" 
       );
 
       setTasks(res.data.tasks);
@@ -30,14 +25,9 @@ const MyTasks = () => {
 
   const markCompleted = async (taskId) => {
     try {
-      await axios.patch(
-        `http://localhost:5000/api/tasks/task/${taskId}/complete`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+      await api.patch(
+        `/api/tasks/task/${taskId}/complete`,
+        {} 
       );
 
       toast.success("Task marked as completed");

@@ -6,6 +6,7 @@ import Input from "../../components/common/Input";
 import { useAuth } from "../../context";
 import axios from "axios";
 import { toast } from "sonner";
+import api from "../../utils/axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -30,7 +31,7 @@ const Login = () => {
 try {
   setIsLoading(true);
 
-  const res = await axios.post("http://localhost:5000/api/auth/login", {
+  const res = await api.post("/api/auth/login", {
     email,
     password,
   });
