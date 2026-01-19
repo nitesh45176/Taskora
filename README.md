@@ -1,140 +1,148 @@
-🚀 Taskora – Task Marketplace & Workflow Platform
+# 🚀 Taskora – Task Marketplace & Workflow Platform
 
-Taskora is a full-stack task marketplace that connects users who need tasks done with runners who complete them.
-It follows real-world task workflows, role-based dashboards, and transparent task tracking from creation to completion.
-
+Taskora is a full-stack task marketplace that connects users who need tasks done with runners who complete them.  
+It follows real-world task workflows, role-based dashboards, and transparent task tracking from creation to completion.  
 Built as a production-grade full-stack project with authentication, role switching, task lifecycle management, and a modern UI.
 
-✨ Features
-👤 User (Task Creator)
+---
 
-Register & login with email verification (OTP)
+## 1️⃣ No Time for Small Errands
 
-Create tasks with:
+**Problem:** Busy schedules make it difficult to handle simple tasks like:
+- Buying medicines
+- Picking up groceries
+- Collecting parcels
+- Dropping documents
 
-Pickup & drop locations
+These tasks seem small but often get postponed due to lack of time.
 
-Description & deadline
+**How Taskora Fixes This:** Users can instantly create a task with pickup and drop locations. Nearby runners can accept and complete the task on their behalf — saving time and reducing stress.
 
-Custom task price
+---
 
-View all posted tasks
+## 2️⃣ Standing in Long Queues Wastes Hours
 
-Track task status in real time
+**Problem:** Waiting in lines at:
+- Medical stores
+- Government offices
+- Banks
+- Ticket counters
 
-Confirm task completion
+can take hours and disrupt an entire day.
 
-Cancel tasks (before completion)
+**How Taskora Fixes This:** Users delegate queue-based tasks to runners who handle the waiting while users focus on more important work.
 
-🏃 Runner
+---
 
-Switch between User ↔ Runner mode
+## 3️⃣ Urgent Help When No One Is Available
 
-Browse open tasks
+**Problem:** Sometimes friends or family aren't available when urgent help is needed — especially during odd hours or emergencies.
 
-Accept tasks (only one active task at a time)
+**How Taskora Fixes This:** Taskora provides on-demand assistance by connecting users with available runners in real time, ensuring help is always accessible.
 
-Start → Deliver → Complete workflow
+## ✨ Features
 
-Cancel & release tasks back to marketplace
+### 👤 User (Task Creator)
+- Register & login with email verification (OTP)
+- Create tasks with:
+  - Pickup & drop locations
+  - Description & deadline
+  - Custom task price
+- View all posted tasks
+- Track task status in real time
+- Confirm task completion
+- Cancel tasks (before completion)
 
-View active & completed tasks
+### 🏃 Runner
+- Switch between User ↔ Runner mode
+- Browse open tasks
+- Accept tasks (only one active task at a time)
+- Start → Deliver → Complete workflow
+- Cancel & release tasks back to marketplace
+- View active & completed tasks
+- Earnings dashboard (based on completed tasks)
 
-Earnings dashboard (based on completed tasks)
+---
 
-📊 Task Lifecycle
+## 📊 Task Lifecycle
+```
 OPEN → ACCEPTED → IN_PROGRESS → DELIVERED → COMPLETED
            ↘
          CANCELLED
+```
 
-🎯 Dashboards
+---
 
-User Dashboard:
+## 🎯 Dashboards
 
-Task stats
+### User Dashboard:
+- Task stats
+- Quick actions
 
-Quick actions
+### Runner Dashboard:
+- Open tasks count
+- Active tasks
+- Completed tasks
+- Total earnings (calculated from task prices)
 
-Runner Dashboard:
+---
 
-Open tasks count
+## 🧠 Smart UX
 
-Active tasks
+- Role-based navigation (User / Runner)
+- Confirmation modals (logout, cancel task, switch role)
+- Animated status timeline
+- Typewriter hero animation
+- Scroll-based UI animations
+- Protected actions with login prompt modal
 
-Completed tasks
+---
 
-Total earnings (calculated from task prices)
+## 🛠 Tech Stack
 
-🧠 Smart UX
+### Frontend
+- React
+- React Router
+- Tailwind CSS
+- Framer Motion (animations)
+- Axios
+- Sonner (toasts)
 
-Role-based navigation (User / Runner)
+### Backend
+- Node.js
+- Express.js
+- MongoDB + Mongoose
+- JWT Authentication
+- OTP Email Verification
 
-Confirmation modals (logout, cancel task, switch role)
+### Other:
+- Role-based access control
+- RESTful API architecture
 
-Animated status timeline
+---
 
-Typewriter hero animation
+## 🔐 Authentication Flow
 
-Scroll-based UI animations
+1. User registers
+2. OTP sent to email
+3. Email verification
+4. Login with JWT
+5. Role-based routing (User / Runner)
 
-Protected actions with login prompt modal
+---
 
-🛠 Tech Stack
-Frontend
+## 💰 Earnings Logic
 
-React
+- Earnings are calculated based on completed tasks only
+- **Total Earnings** = Sum of price of all COMPLETED tasks
 
-React Router
+> 📌 For MVP simplicity, earnings are calculated on the frontend using accepted task data.  
+> (This can be moved to backend aggregation later.)
 
-Tailwind CSS
+---
 
-Framer Motion (animations)
-
-Axios
-
-Sonner (toasts)
-
-Backend
-
-Node.js
-
-Express.js
-
-MongoDB + Mongoose
-
-JWT Authentication
-
-OTP Email Verification
-
-Other:
-
-Role-based access control
-
-RESTful API architecture
-
-🔐 Authentication Flow
-
-User registers
-
-OTP sent to email
-
-Email verification
-
-Login with JWT
-
-Role-based routing (User / Runner)
-
-💰 Earnings Logic
-
-Earnings are calculated based on completed tasks only
-
-Total Earnings = Sum of price of all COMPLETED tasks
-
-
-📌 For MVP simplicity, earnings are calculated on the frontend using accepted task data.
-(This can be moved to backend aggregation later.)
-
-📂 Project Structure (Simplified)
+## 📂 Project Structure (Simplified)
+```
 Frontend/
  ├── components/
  ├── pages/
@@ -152,80 +160,92 @@ Backend/
  ├── routes/
  ├── middlewares/
  └── server.js
+```
 
-🚀 Getting Started
-1️⃣ Clone the repo
+---
+
+## 🚀 Getting Started
+
+### 1️⃣ Clone the repo
+```bash
 git clone https://github.com/nitesh45176/taskora.git
+```
 
-2️⃣ Install dependencies
+### 2️⃣ Install dependencies
 
-Backend
-
+**Backend**
+```bash
 cd server
 npm install
+```
 
-
-Frontend
-
+**Frontend**
+```bash
 cd client
 npm install
+```
 
-3️⃣ Environment Variables
+### 3️⃣ Environment Variables
 
-Create .env in server/
-
+Create `.env` in `server/`
+```env
 MONGO_URI=your_mongodb_uri
 JWT_SECRET=your_jwt_secret
 EMAIL_USER=your_email
 EMAIL_PASS=your_email_password
+```
 
-4️⃣ Run the app
+### 4️⃣ Run the app
 
-Backend
-
+**Backend**
+```bash
 npm run dev
+```
 
-
-Frontend
-
+**Frontend**
+```bash
 npm run dev
+```
 
-🌍 Deployment
+---
 
-Frontend: Vercel 
+## 🌍 Deployment
 
-Backend: Render 
+- **Frontend:** Vercel
+- **Backend:** Render
+- **Database:** MongoDB Atlas
 
-Database: MongoDB Atlas
+---
 
-🧪 Status
+## 🧪 Status
 
-✅ Core features completed
-🚧 Proof upload & payments intentionally skipped
-🔄 Backend earnings aggregation can be added later
+- ✅ Core features completed
+- 🚧 Proof upload & payments intentionally skipped
+- 🔄 Backend earnings aggregation can be added later
 
-📌 Why This Project?
+---
+
+## 📌 Why This Project?
 
 This project demonstrates:
+- Real-world workflow modeling
+- Clean role separation
+- State-based task systems
+- Full-stack architecture
+- Production-style UI/UX decisions
 
-Real-world workflow modeling
+---
 
-Clean role separation
+## 🙌 Author
 
-State-based task systems
+**Nitesh Kr. Mishra**  
+B.Tech (IT) | Full-Stack Developer
 
-Full-stack architecture
+📧 [mishranitesh45176@gmail.com](mailto:mishranitesh45176@gmail.com)  
+🔗 [LinkedIn](https://www.linkedin.com/in/nitesh-mishra-368662321/) | [GitHub](https://github.com/nitesh45176)
 
-Production-style UI/UX decisions
+---
 
-🙌 Author
-
-Nitesh Kr. Mishra
-B.Tech (IT)
-Full-Stack Developer
-📧 mishranitesh45176@gmail.com
-🔗 https://www.linkedin.com/in/nitesh-mishra-368662321/  |   github.com/nitesh45176
-
-⭐ If you like this project
+## ⭐ If you like this project
 
 Give it a ⭐ on GitHub — it really helps!
