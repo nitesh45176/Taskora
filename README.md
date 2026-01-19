@@ -6,6 +6,8 @@ Built as a production-grade full-stack project with authentication, role switchi
 
 ---
 
+### Problems that we face in daily life
+
 ## 1️⃣ No Time for Small Errands
 
 **Problem:** Busy schedules make it difficult to handle simple tasks like:
