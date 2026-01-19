@@ -9,13 +9,25 @@ import userRoutes from "./routes/user.route.js";
 
 const app = express();
 
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://taskora-ygjk.vercel.app/"
-  ],
-  credentials: true
-}));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://taskora-v9jk.vercel.app", 
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
