@@ -69,6 +69,9 @@ try {
   return (
     <AuthLayout>
       <div className="lg:w-[70%] h-full flex flex-col justify-center px-8 md:px-12">
+        <Link to='/' className="inline-flex items-center text-slate-400 hover:text-white mb-4">
+         ← Back 
+        </Link>
         <h3 className="text-3xl font-heading font-bold text-white">
           Welcome back to <span className="text-blue-500">Taskora</span>
         </h3>

@@ -27,12 +27,7 @@ const Navbar = () => {
 
         {/* CTA */}
         <div className="flex items-center gap-3">
-          <Link
-            to="/login"
-            className="text-slate-300 hover:text-white transition"
-          >
-            Login
-          </Link>
+          
 
           <Link
             to="/register"

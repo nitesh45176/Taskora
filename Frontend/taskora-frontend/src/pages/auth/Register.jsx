@@ -46,7 +46,6 @@ const Register = () => {
       navigate("/verify-email", {
         state: { email: form.email },
       });
-
     } catch (err) {
       setError(err.response?.data?.message || "Sign up failed");
     } finally {
@@ -57,6 +56,7 @@ const Register = () => {
   return (
     <AuthLayout>
       <div className="lg:w-[70%] h-full flex flex-col justify-center px-8 md:px-12">
+        <Link to="/" className="inline-flex items-center text-slate-400 hover:text-white mb-4">← Back</Link>
 
         <h3 className="text-3xl font-heading font-bold text-white md:pt-5 pt-28">
           Create your <span className="text-blue-500">Taskora</span> account
@@ -67,7 +67,6 @@ const Register = () => {
         </p>
 
         <form onSubmit={handleRegister} className="space-y-6">
-
           <Input
             name="name"
             value={form.name}
@@ -110,7 +109,6 @@ const Register = () => {
               Login
             </Link>
           </p>
-
         </form>
       </div>
     </AuthLayout>
