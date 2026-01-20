@@ -18,29 +18,29 @@ import UserLayout from "./components/layout/UserLayout";
 import RunnerLayout from "./components/layout/RunnerLayout";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 const App = () => {
   const location = useLocation();
   const authRoutes = ["/login", "/register", "/verify-email"];
   const isAuthPage = authRoutes.includes(location.pathname);
-  const {isAuthenticated, user, isLoading } = useAuth();
+  const { isAuthenticated, user, isLoading } = useAuth();
 
   // Wait for auth to load before routing
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0B1220] flex items-center justify-center text-white">
-        Loading...
+      <div className="min-h-screen bg-[#0B1220] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-white">
+          <div className="h-10 w-10 rounded-full border-4 border-blue-500 border-t-transparent animate-spin" />
+          <span className="text-slate-400 text-sm">Loading...</span>
+        </div>
       </div>
     );
   }
 
-
-
- 
-
   return (
     <div>
-      
+      <ScrollToTop />
       {/* Show main navbar only on public pages */}
       {!isAuthPage &&
         !location.pathname.startsWith("/user") &&
@@ -88,15 +88,12 @@ const App = () => {
         <Route path="/home" element={<Home />} />
       </Routes>
 
-      
-
       {!isAuthPage &&
         !location.pathname.startsWith("/user") &&
         !location.pathname.startsWith("/runner") && <Footer />}
 
       <Toaster richColors />
     </div>
-    
   );
 };
 

@@ -46,7 +46,7 @@ export const switchRole = async (req, res) => {
       }
 
       // Optional safety: check active tasks as user (future)
-      user?.status = "runner";
+      user.status = "runner";
       await user.save();
 
       return res.status(200).json({

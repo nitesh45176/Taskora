@@ -7,6 +7,7 @@ import api from "../../utils/axios";
 
 const RunnerNavbar = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
   const [showSwitchModal, setShowSwitchModal] = useState(false);
   const { user, logout , setUser} = useAuth();
   const navigate = useNavigate();
@@ -71,26 +72,32 @@ const RunnerNavbar = () => {
           {/* Divider */}
           <div className="hidden sm:block h-6 w-px bg-[#1E2A45]" />
 
-          {/* Avatar Menu */}
-          <div className="relative group">
-            <div className="h-9 w-9 flex items-center justify-center rounded-full bg-[#1E2A45] text-white font-semibold cursor-pointer">
+          {/* Avatar (CLICK BASED – MOBILE SAFE) */}
+            <button
+              onClick={() => setOpenMenu((prev) => !prev)}
+              className="h-9 w-9 flex items-center justify-center rounded-full bg-[#1E2A45] text-white font-semibold"
+            >
               {user?.name?.[0]?.toUpperCase()}
-            </div>
+            </button>
 
             {/* Dropdown */}
-            <div className="absolute right-0 mt-2 w-44 rounded-xl bg-[#0B1220] border border-[#1E2A45] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-              <p className="px-4 py-2 text-sm text-slate-400">
-                Runner: {user?.name}
-              </p>
+            {openMenu && (
+              <div className="absolute right-0 top-12 w-44 rounded-xl bg-[#0B1220] border border-[#1E2A45] shadow-xl z-50">
+                <p className="px-4 py-2 text-sm text-slate-400">
+                  User: {user?.name}
+                </p>
 
-              <button
-                onClick={() => setShowLogoutModal(true)}
-                className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
+                <button
+                  onClick={() => {
+                    setOpenMenu(false);
+                    setShowLogoutModal(true);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
 
           <ConfirmModal
             open={showLogoutModal}
