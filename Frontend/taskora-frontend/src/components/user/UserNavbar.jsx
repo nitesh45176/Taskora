@@ -1,126 +1,125 @@
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import BecomeRunnerButton from "../../pages/runner/BecomeRunnerButton";
-import ConfirmModal from "../common/ConfirmModal";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import api from "../../utils/axios";
 import { useAuth } from "../../context";
+import ConfirmModal from "../common/ConfirmModal";
 
 const UserNavbar = () => {
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showSwitchModal, setShowSwitchModal] = useState(false);
-  const [openMenu, setOpenMenu] = useState(false);
-
   const { user, logout, setUser } = useAuth();
   const navigate = useNavigate();
 
+  const [showMenu, setShowMenu] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showSwitchModal, setShowSwitchModal] = useState(false);
+
+  const menuRef = useRef(null);
+
+  //  Close menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const switchToRunner = async () => {
     try {
-      const res = await api.patch("/api/user/switch-role");
+      await api.patch("/api/user/switch-role");
 
-      const updatedUser = res.data?.user || {
-        ...user,
-        status: "runner",
-        isRunner: true,
-      };
-
+      const updatedUser = { ...user, status: "runner", isRunner: true };
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
-      toast.success("Switched to Runner mode 🚀");
+      toast.success("Switched to Runner 🚀");
       navigate("/runner");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Cannot switch role");
-    }
-  };
-
-  const handleBecomeRunner = async () => {
-    try {
-      await api.post("/api/user/apply-runner");
-      await switchToRunner();
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to become runner");
+    } catch {
+      toast.error("Cannot switch role");
     }
   };
 
   return (
     <nav className="fixed top-6 left-1/2 z-50 w-[90%] max-w-7xl -translate-x-1/2">
       <div className="flex items-center justify-between rounded-full border border-[#1E2A45] bg-[#0B1220]/80 px-5 py-2.5 backdrop-blur-xl shadow-lg">
-        
+
         {/* Logo */}
         <Link to="/user" className="flex items-center gap-2">
           <div className="h-9 w-9 rounded-lg bg-blue-500 flex items-center justify-center font-bold text-white">
             T
           </div>
-          <span className="text-lg font-semibold text-white tracking-wide">
-            Taskora.
-          </span>
+          <span className="text-lg font-semibold text-white">Taskora.</span>
         </Link>
 
-        {/* Links */}
+        {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8 text-sm text-slate-300">
-          <Link to="/user" className="hover:text-white">Dashboard</Link>
-          <Link to="/user/create" className="hover:text-white">Post Task</Link>
-          <Link to="/user/tasks" className="hover:text-white">My Tasks</Link>
+          <Link to="/user">Dashboard</Link>
+          <Link to="/user/create">Post Task</Link>
+          <Link to="/user/tasks">My Tasks</Link>
         </div>
 
         {/* Actions */}
-        {user && (
-          <div className="flex items-center gap-2 relative">
-            
-            {/* First-time runner */}
-            {user.status === "user" && user.isRunner === false && (
-              <BecomeRunnerButton
-                onClick={handleBecomeRunner}
-                className="rounded-full border border-blue-500/50 px-4 py-1.5 text-sm text-blue-400 hover:bg-blue-500/10"
-              />
-            )}
+        <div className="flex items-center gap-3 relative" ref={menuRef}>
 
-            {/* Switch role */}
-            {user.status === "user" && user.isRunner === true && (
-              <button
-                onClick={() => setShowSwitchModal(true)}
-                className="rounded-full border border-green-500/50 px-4 py-1.5 text-sm text-green-400 hover:bg-green-500/10"
-              >
-                Switch to Runner
-              </button>
-            )}
-
-            {/* Avatar (CLICK BASED – MOBILE SAFE) */}
+          {/* Desktop Switch Button */}
+          {user?.isRunner && (
             <button
-              onClick={() => setOpenMenu((prev) => !prev)}
-              className="h-9 w-9 flex items-center justify-center rounded-full bg-[#1E2A45] text-white font-semibold"
+              onClick={() => setShowSwitchModal(true)}
+              className="hidden md:block rounded-full border border-green-500/50 px-4 py-1.5 text-sm text-green-400 hover:bg-green-500/10"
             >
-              {user?.name?.[0]?.toUpperCase()}
+              Switch to Runner
             </button>
+          )}
 
-            {/* Dropdown */}
-            {openMenu && (
-              <div className="absolute right-0 top-12 w-44 rounded-xl bg-[#0B1220] border border-[#1E2A45] shadow-xl z-50">
-                <p className="px-4 py-2 text-sm text-slate-400">
-                  User: {user?.name}
-                </p>
+          {/* Profile Avatar */}
+          <button
+            onClick={() => setShowMenu((prev) => !prev)}
+            className="h-9 w-9 rounded-full bg-[#1E2A45] text-white font-semibold flex items-center justify-center"
+          >
+            {user?.name?.[0]?.toUpperCase()}
+          </button>
 
+          {/*  Dropdown (mobile + desktop click) */}
+          {showMenu && (
+            <div className="absolute right-0 top-12 w-44 rounded-xl bg-[#0B1220] border border-[#1E2A45] shadow-lg">
+              <p className="px-4 py-2 text-sm text-slate-400">
+               User: {user.name}
+              </p>
+
+              {/* Mobile switch */}
+              {user?.isRunner && (
                 <button
                   onClick={() => {
-                    setOpenMenu(false);
-                    setShowLogoutModal(true);
+                    setShowMenu(false);
+                    setShowSwitchModal(true);
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10"
+                  className="md:hidden w-full text-left px-4 py-2 text-sm text-green-400 hover:bg-green-500/10"
                 >
-                  Logout
+                  Switch to Runner
                 </button>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+
+              <button
+                onClick={() => {
+                  setShowMenu(false);
+                  setShowLogoutModal(true);
+                }}
+                className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Logout Modal */}
+      {/* Modals */}
       <ConfirmModal
         open={showLogoutModal}
         title="Logout?"
-        description="You will be redirected to the home page."
         confirmText="Logout"
         danger
         onCancel={() => setShowLogoutModal(false)}
@@ -130,17 +129,12 @@ const UserNavbar = () => {
         }}
       />
 
-      {/* Switch Role Modal */}
       <ConfirmModal
         open={showSwitchModal}
-        title="Switch to Runner mode?"
-        description="You’ll see tasks available to earn and manage your active work."
-        confirmText="Yes, Switch"
+        title="Switch to Runner?"
+        confirmText="Yes"
         onCancel={() => setShowSwitchModal(false)}
-        onConfirm={async () => {
-          setShowSwitchModal(false);
-          await switchToRunner();
-        }}
+        onConfirm={switchToRunner}
       />
     </nav>
   );

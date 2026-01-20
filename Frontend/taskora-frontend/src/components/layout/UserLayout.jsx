@@ -3,10 +3,13 @@ import { useAuth } from "../../context";
 import UserNavbar from "../user/UserNavbar";
 
 const UserLayout = () => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  //  wait until auth is ready
+  if (isLoading) return null;
 
   if (!user || user.status !== "user") {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (

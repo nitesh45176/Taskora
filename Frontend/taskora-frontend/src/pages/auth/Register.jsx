@@ -56,11 +56,17 @@ const Register = () => {
   return (
     <AuthLayout>
       <div className="lg:w-[70%] h-full flex flex-col justify-center px-8 md:px-12">
-        <Link to="/" className="inline-flex items-center text-slate-400 hover:text-white mb-4">← Back</Link>
-
+        <Link
+          to="/"
+          className="inline-flex items-center text-slate-400 hover:text-white mb-4"
+        >
+          ← Back
+        </Link>
+        
         <h3 className="text-3xl font-heading font-bold text-white md:pt-5 pt-28">
           Create your <span className="text-blue-500">Taskora</span> account
         </h3>
+        
 
         <p className="text-slate-400 mt-2 mb-10">
           Sign up to start posting tasks or earning as a runner.

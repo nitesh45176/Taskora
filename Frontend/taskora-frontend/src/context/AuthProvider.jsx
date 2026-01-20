@@ -1,38 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 
 const getStoredUser = () => {
   try {
-    const user = JSON.parse(localStorage.getItem("user"));
-    return user || null;
+    return JSON.parse(localStorage.getItem("user"));
   } catch {
     return null;
   }
 };
 
-
-const getStoredToken = () => {
-  return localStorage.getItem("token");
-};
+const getStoredToken = () => localStorage.getItem("token");
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(getStoredUser);
-  const [token, setToken] = useState(getStoredToken);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const storedUser = getStoredUser();
+    const storedToken = getStoredToken();
+
+    setUser(storedUser);
+    setToken(storedToken);
+    setIsLoading(false);
+  }, []);
 
   const login = (userData, jwtToken) => {
-  const fullUser = {
-    ...userData,
-    isRunner: userData.isRunner || false,
-    status: userData.status || "user"
+    setUser(userData);
+    setToken(jwtToken);
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", jwtToken);
   };
-
-  setUser(fullUser);
-  setToken(jwtToken);
-
-  localStorage.setItem("user", JSON.stringify(fullUser));
-  localStorage.setItem("token", jwtToken);
-};
-
 
   const logout = () => {
     setUser(null);
@@ -48,8 +46,9 @@ export const AuthProvider = ({ children }) => {
         token,
         login,
         logout,
+        setUser,
         isAuthenticated: !!token,
-        setUser
+        isLoading,
       }}
     >
       {children}
