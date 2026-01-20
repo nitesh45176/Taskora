@@ -37,7 +37,7 @@ export const switchRole = async (req, res) => {
     const user = req.user;
 
     // USER → RUNNER
-    if (user.status === "user") {
+    if (user?.status === "user") {
 
       if (!user.isRunner) {
         return res.status(403).json({
@@ -46,7 +46,7 @@ export const switchRole = async (req, res) => {
       }
 
       // Optional safety: check active tasks as user (future)
-      user.status = "runner";
+      user?.status = "runner";
       await user.save();
 
       return res.status(200).json({
@@ -57,7 +57,7 @@ export const switchRole = async (req, res) => {
     }
 
     // RUNNER → USER
-    if (user.status === "runner") {
+    if (user?.status === "runner") {
 
       // IMPORTANT: runner must not have active task
       const activeTask = await Task.findOne({
