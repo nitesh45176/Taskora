@@ -11,11 +11,12 @@ const UserNavbar = () => {
 
   const [showMenu, setShowMenu] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showBecomeRunnerModal, setShowBecomeRunnerModal] = useState(false);
   const [showSwitchModal, setShowSwitchModal] = useState(false);
 
   const menuRef = useRef(null);
 
-  //  Close menu on outside click
+  /* Close dropdown on outside click */
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -27,20 +28,47 @@ const UserNavbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  /* ========== APPLY RUNNER (FIRST TIME) ========== */
+ const becomeRunner = async () => {
+  try {
+    // 1. Apply runner
+    await api.post("/api/user/apply-runner");
+
+    // 2. Switch role (this updates status)
+    const res = await api.patch("/api/user/switch-role");
+
+    const { user: updatedUser, token } = res.data;
+
+    // 3. Update auth state
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    localStorage.setItem("token", token);
+
+    toast.success("Welcome to Runner mode 🚀");
+    navigate("/runner");
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to become runner");
+  }
+};
+
+  /* ========== SWITCH ROLE (USER ↔ RUNNER) ========== */
   const switchToRunner = async () => {
-    try {
-      await api.patch("/api/user/switch-role");
+  try {
+    const res = await api.patch("/api/user/switch-role");
 
-      const updatedUser = { ...user, status: "runner", isRunner: true };
-      setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+    const { user: updatedUser, token } = res.data;
 
-      toast.success("Switched to Runner 🚀");
-      navigate("/runner");
-    } catch {
-      toast.error("Cannot switch role");
-    }
-  };
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    localStorage.setItem("token", token);
+
+    toast.success("Switched to Runner 🚀");
+    navigate("/runner");
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Cannot switch role");
+  }
+};
+
 
   return (
     <nav className="fixed top-6 left-1/2 z-50 w-[90%] max-w-7xl -translate-x-1/2">
@@ -64,8 +92,17 @@ const UserNavbar = () => {
         {/* Actions */}
         <div className="flex items-center gap-3 relative" ref={menuRef}>
 
-          {/* Desktop Switch Button */}
-          {user?.isRunner && (
+          {/* DESKTOP ACTION BUTTON */}
+          {!user?.isRunner && (
+            <button
+              onClick={() => setShowBecomeRunnerModal(true)}
+              className="hidden md:block rounded-full border border-blue-500/50 px-4 py-1.5 text-sm text-blue-400 hover:bg-blue-500/10"
+            >
+              Become a Runner
+            </button>
+          )}
+
+          {user?.isRunner && user?.status === "user" && (
             <button
               onClick={() => setShowSwitchModal(true)}
               className="hidden md:block rounded-full border border-green-500/50 px-4 py-1.5 text-sm text-green-400 hover:bg-green-500/10"
@@ -74,7 +111,7 @@ const UserNavbar = () => {
             </button>
           )}
 
-          {/* Profile Avatar */}
+          {/* Avatar */}
           <button
             onClick={() => setShowMenu((prev) => !prev)}
             className="h-9 w-9 rounded-full bg-[#1E2A45] text-white font-semibold flex items-center justify-center"
@@ -82,15 +119,29 @@ const UserNavbar = () => {
             {user?.name?.[0]?.toUpperCase()}
           </button>
 
-          {/*  Dropdown (mobile + desktop click) */}
+          {/* Dropdown */}
           {showMenu && (
-            <div className="absolute right-0 top-12 w-44 rounded-xl bg-[#0B1220] border border-[#1E2A45] shadow-lg">
+            <div className="absolute right-0 top-12 w-48 rounded-xl bg-[#0B1220] border border-[#1E2A45] shadow-lg">
+
               <p className="px-4 py-2 text-sm text-slate-400">
-               User: {user.name}
+                User: {user?.name}
               </p>
 
-              {/* Mobile switch */}
-              {user?.isRunner && (
+              {/* MOBILE: Become Runner */}
+              {!user?.isRunner && (
+                <button
+                  onClick={() => {
+                    setShowMenu(false);
+                    setShowBecomeRunnerModal(true);
+                  }}
+                  className="md:hidden w-full text-left px-4 py-2 text-sm text-blue-400 hover:bg-blue-500/10"
+                >
+                  Become a Runner
+                </button>
+              )}
+
+              {/* MOBILE: Switch Runner */}
+              {user?.isRunner && user?.status === "user" && (
                 <button
                   onClick={() => {
                     setShowMenu(false);
@@ -116,7 +167,7 @@ const UserNavbar = () => {
         </div>
       </div>
 
-      {/* Modals */}
+      {/* LOGOUT MODAL */}
       <ConfirmModal
         open={showLogoutModal}
         title="Logout?"
@@ -129,10 +180,22 @@ const UserNavbar = () => {
         }}
       />
 
+      {/* BECOME RUNNER MODAL */}
+      <ConfirmModal
+        open={showBecomeRunnerModal}
+        title="Become a Runner?"
+        description="You’ll be able to accept tasks and earn money."
+        confirmText="Yes, Become Runner"
+        onCancel={() => setShowBecomeRunnerModal(false)}
+        onConfirm={becomeRunner}
+      />
+
+      {/* SWITCH ROLE MODAL */}
       <ConfirmModal
         open={showSwitchModal}
         title="Switch to Runner?"
-        confirmText="Yes"
+        description="You’ll switch to runner mode."
+        confirmText="Yes, Switch"
         onCancel={() => setShowSwitchModal(false)}
         onConfirm={switchToRunner}
       />

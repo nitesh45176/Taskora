@@ -64,17 +64,19 @@ const CreateTask = () => {
 
   return (
     <div className="min-h-screen bg-[#0B1220] pt-40 flex justify-center ">
+      
       <div className="w-full max-w-3xl bg-[#121A2B]/80 backdrop-blur-xl border border-[#1E2A45] rounded-3xl p-10 shadow-2xl">
-        <h1 className="text-3xl font-bold text-white mb-2">Post a Task</h1>
-        <p className="text-slate-400 mb-10">
-          Describe what you need and a verified runner will handle it for you.
-        </p>
-        <Link
+       <Link
           to="/user"
           className="inline-flex items-center text-slate-400 hover:text-white mb-4"
         >
           ← Back to Dashboard
         </Link>
+        <h1 className="text-3xl font-bold text-white mb-2">Post a Task</h1>
+        <p className="text-slate-400 mb-10">
+          Describe what you need and a verified runner will handle it for you.
+        </p>
+       
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Title */}

@@ -45,7 +45,6 @@ const RunnerNavbar = () => {
   return (
     <nav className="fixed top-6 left-1/2 z-50 w-[90%] max-w-7xl -translate-x-1/2">
       <div className="flex items-center justify-between rounded-full border border-[#1E2A45] bg-[#0B1220]/80 px-5 py-2.5 backdrop-blur-xl shadow-lg">
-
         {/* Logo */}
         <Link to="/runner" className="flex items-center gap-2">
           <div className="h-9 w-9 rounded-lg bg-blue-500 flex items-center justify-center font-bold text-white">
@@ -63,14 +62,15 @@ const RunnerNavbar = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-3 relative" ref={menuRef}>
-
           {/*  Desktop switch button */}
-          <button
-            onClick={() => setShowSwitchModal(true)}
-            className="hidden md:block rounded-full border border-blue-500/50 px-4 py-1.5 text-sm text-blue-400 hover:bg-blue-500/10"
-          >
-            Switch to User
-          </button>
+          {user?.status === "runner" && (
+            <button
+              onClick={() => setShowSwitchModal(true)}
+              className="rounded-full hidden md:block border border-blue-500/50 px-4 py-1.5 text-sm text-blue-400 hover:bg-blue-500/10 transition"
+            >
+              Switch to User
+            </button>
+          )}
 
           {/* Profile avatar */}
           <button

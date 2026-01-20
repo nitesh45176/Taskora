@@ -32,34 +32,26 @@ export const applyRunner = async (req, res) => {
 
 
 
+import jwt from "jsonwebtoken";
+
 export const switchRole = async (req, res) => {
   try {
     const user = req.user;
 
     // USER → RUNNER
-    if (user?.status === "user") {
-
+    if (user.status === "user") {
       if (!user.isRunner) {
         return res.status(403).json({
           message: "You do not have a runner account",
         });
       }
 
-      // Optional safety: check active tasks as user (future)
       user.status = "runner";
       await user.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Switched to RUNNER mode",
-        status: user.status,
-      });
     }
 
     // RUNNER → USER
-    if (user?.status === "runner") {
-
-      // IMPORTANT: runner must not have active task
+    else if (user.status === "runner") {
       const activeTask = await Task.findOne({
         acceptedBy: user._id,
         status: { $in: ["ACCEPTED", "IN_PROGRESS"] },
@@ -73,18 +65,33 @@ export const switchRole = async (req, res) => {
 
       user.status = "user";
       await user.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Switched to USER mode",
-        status: user.status,
-      });
     }
 
+    // 🔥 ISSUE NEW TOKEN
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Role switched successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        status: user.status,
+        isRunner: user.isRunner,
+      },
+      token,
+    });
   } catch (error) {
     console.error("Switch role error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+
 
 
