@@ -52,7 +52,7 @@ const App = () => {
           path="/"
           element={
             isAuthenticated ? (
-              user.status === "runner" ? (
+              user?.status === "runner" ? (
                 <Navigate to="/runner" />
               ) : (
                 <Navigate to="/user" />

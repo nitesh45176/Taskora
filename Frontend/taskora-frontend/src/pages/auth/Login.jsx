@@ -4,7 +4,6 @@ import { validEmail } from "../../utils/helper";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/common/Input";
 import { useAuth } from "../../context";
-import axios from "axios";
 import { toast } from "sonner";
 import api from "../../utils/axios";
 
@@ -45,7 +44,7 @@ try {
     toast.success("Login successful!");
 
     // Redirect based on role
-    if (user.status === "runner") {
+    if (user?.status === "runner") {
       navigate("/runner");
     } else {
       navigate("/user");

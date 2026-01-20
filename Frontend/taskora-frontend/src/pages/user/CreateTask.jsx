@@ -31,7 +31,7 @@ const CreateTask = () => {
         {
           title: form.title,
           description: form.description,
-          items: form.items.split(",").map(i => ({ name: i.trim() })),
+          items: form.items.split(",").map((i) => ({ name: i.trim() })),
           pickupLocation: { masked: form.pickupLocation },
           dropLocation: { masked: form.dropLocation },
           deadline: form.deadline,
@@ -41,7 +41,7 @@ const CreateTask = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.success("Task posted successfully!");
@@ -68,6 +68,12 @@ const CreateTask = () => {
         <p className="text-slate-400 mb-10">
           Describe what you need and a verified runner will handle it for you.
         </p>
+        <Link
+          to="/user"
+          className="inline-flex items-center text-slate-400 hover:text-white mb-4"
+        >
+          ← Back to Dashboard
+        </Link>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Title */}

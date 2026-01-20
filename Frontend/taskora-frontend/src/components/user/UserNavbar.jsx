@@ -12,10 +12,13 @@ const UserNavbar = () => {
   const { user, logout, setUser } = useAuth();
   const navigate = useNavigate();
 
-
   const switchToRunner = async () => {
     try {
       const res = await api.patch("/api/user/switch-role");
+
+      if (!res?.data?.user) {
+        throw new Error("Invalid response from server");
+      }
 
       const updatedUser = res.data.user;
       setUser(updatedUser);
@@ -28,13 +31,16 @@ const UserNavbar = () => {
     }
   };
 
-
   const handleBecomeRunner = async () => {
     try {
       await api.post("/api/user/apply-runner");
 
       // switch role
       const res = await api.patch("/api/user/switch-role");
+
+      if (!res?.data?.user) {
+        throw new Error("Invalid response from server");
+      }
 
       const updatedUser = res.data.user;
       setUser(updatedUser);
@@ -77,7 +83,7 @@ const UserNavbar = () => {
         {user && (
           <div className="flex items-center gap-2">
             {/* FIRST TIME ONLY */}
-            {user.status === "user" && user.isRunner === false && (
+            {user?.status === "user" && user.isRunner === false && (
               <BecomeRunnerButton
                 onClick={handleBecomeRunner}
                 className="rounded-full border border-blue-500/50 px-4 py-1.5 text-sm text-blue-400 hover:bg-blue-500/10"
@@ -85,7 +91,7 @@ const UserNavbar = () => {
             )}
 
             {/* ALREADY RUNNER */}
-            {user.status === "user" && user.isRunner === true && (
+            {user?.status === "user" && user.isRunner === true && (
               <button
                 onClick={() => setShowSwitchModal(true)}
                 className="rounded-full border border-green-500/50 px-4 py-1.5 text-sm text-green-400 hover:bg-green-500/10"
