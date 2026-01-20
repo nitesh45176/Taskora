@@ -8,22 +8,23 @@ import api from "../../utils/axios";
 const RunnerNavbar = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showSwitchModal, setShowSwitchModal] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout , setUser} = useAuth();
   const navigate = useNavigate();
 
   const switchToUser = async () => {
     try {
+      await api.patch("/api/user/switch-role");
 
-      await api.patch(
-        "/api/user/switch-role",
-      );
+      const updatedUser = {
+        ...user,
+        status: "user",
+      };
 
-      const updatedUser = { ...user, status: "user" };
+      setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
       toast.success("Switched to User mode 👤");
       navigate("/user");
-      window.location.reload();
     } catch (err) {
       toast.error(err.response?.data?.message || "Cannot switch role");
     }

@@ -13,33 +13,24 @@ const UserNavbar = () => {
   const navigate = useNavigate();
 
   const switchToRunner = async () => {
-  try {
-    const res = await api.patch("/api/user/switch-role");
+    try {
+      await api.patch("/api/user/switch-role");
 
-    // Defensive check
-    const updatedUser =
-      res?.data?.user ||
-      res?.data?.data ||
-      res?.data;
+      const updatedUser = {
+        ...user,
+        status: "runner",
+        isRunner: true,
+      };
 
-    if (!updatedUser || !updatedUser.status) {
-      console.error("Invalid response shape:", res.data);
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
       toast.success("Switched to Runner mode 🚀");
       navigate("/runner");
-      return;
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Cannot switch role");
     }
-
-    setUser(updatedUser);
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-
-    toast.success("Switched to Runner mode 🚀");
-    navigate("/runner");
-  } catch (err) {
-    console.error("Switch role error:", err);
-    toast.error("Cannot switch role");
-  }
-};
-
+  };
 
   const handleBecomeRunner = async () => {
     try {
