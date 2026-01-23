@@ -27,50 +27,52 @@ const Login = () => {
       return;
     }
 
-try {
-  setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-  const res = await api.post("/api/auth/login", {
-    email,
-    password,
-  });
+      const res = await api.post("/api/auth/login", {
+        email,
+        password,
+      });
 
-  const user = res.data.user;
-  const token = res.data.token;
+      const user = res.data.user;
+      const token = res.data.token;
 
-    // Save to context + localStorage
-    login(user, token);
+      // Save to context + localStorage
+      login(user, token);
 
-    toast.success("Login successful!");
+      toast.success("Login successful!");
 
-    // Redirect based on role
-    if (user?.status === "runner") {
-      navigate("/runner");
-    } else {
-      navigate("/user");
+      // Redirect based on role
+      if (user?.status === "runner") {
+        navigate("/runner");
+      } else {
+        navigate("/user");
+      }
+    } catch (error) {
+      const status = error.response?.status;
+      const data = error.response?.data;
+     
+      //removed resend email for sometime
+      if (status === 403) {
+        toast.error(data.message || "Email verification required");
+      } else if (status === 401) {
+        toast.error("Incorrect email or password");
+      } else {
+        toast.error("Login failed");
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-  } catch (error) {
-    const status = error.response?.status;
-    const data = error.response?.data;
-
-    if (status === 403) {
-      toast.error(data.message || "Please verify your email");
-      navigate("/verify-email", { state: { email } });
-    } else if (status === 401) {
-      toast.error("Incorrect email or password");
-    } else {
-      toast.error("Login failed");
-    }
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
   return (
     <AuthLayout>
       <div className="lg:w-[70%] h-full flex flex-col justify-center px-8 md:px-12">
-        <Link to='/' className="inline-flex items-center text-slate-400 hover:text-white mb-4">
-         ← Back 
+        <Link
+          to="/"
+          className="inline-flex items-center text-slate-400 hover:text-white mb-4"
+        >
+          ← Back
         </Link>
         <h3 className="text-3xl font-heading font-bold text-white">
           Welcome back to <span className="text-blue-500">Taskora</span>

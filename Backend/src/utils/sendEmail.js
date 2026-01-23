@@ -12,13 +12,22 @@ const getResendClient = () => {
   return resend
 }
 
+//removed resend email for sometime
 export const sendEmail = async ({ to, subject, text }) => {
-  const client = getResendClient()
-  
+  if (process.env.ENABLE_EMAIL_VERIFICATION !== "true") {
+    console.log("📧 EMAIL BYPASSED (DEV MODE)");
+    console.log("To:", to);
+    console.log("Subject:", subject);
+    console.log("Text:", text);
+    return;
+  }
+
+  const client = getResendClient();
+
   await client.emails.send({
     from: process.env.MAIL_FROM,
     to,
     subject,
-    text
-  })
-}
+    text,
+  });
+};

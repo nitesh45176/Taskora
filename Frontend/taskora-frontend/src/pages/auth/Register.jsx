@@ -4,6 +4,7 @@ import { validEmail } from "../../utils/helper";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/common/Input";
 import api from "../../utils/axios";
+import { toast } from "sonner";
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -41,11 +42,15 @@ const Register = () => {
     }
 
     try {
-      await api.post("/api/auth/signup", form);
+      const res = await api.post("/api/auth/signup", form);
 
-      navigate("/verify-email", {
-        state: { email: form.email },
-      });
+      toast.success("Signup successful");
+
+      if (res.data.isVerified) {
+        navigate("/login"); // or auto-login
+      } else {
+        navigate("/verify-email", { state: { email: form.email } });
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Sign up failed");
     } finally {
@@ -62,11 +67,10 @@ const Register = () => {
         >
           ← Back
         </Link>
-        
+
         <h3 className="text-3xl font-heading font-bold text-white md:pt-5 pt-28">
           Create your <span className="text-blue-500">Taskora</span> account
         </h3>
-        
 
         <p className="text-slate-400 mt-2 mb-10">
           Sign up to start posting tasks or earning as a runner.
