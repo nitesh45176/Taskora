@@ -2,7 +2,7 @@
 
 Taskora is a full-stack task marketplace that connects users who need tasks done with runners who complete them.  
 It follows real-world task workflows, role-based dashboards, and transparent task tracking from creation to completion.  
-Built as a production-grade full-stack project with authentication, role switching, task lifecycle management, and a modern UI.
+Designed with production-grade backend principles, including escrow management, dispute arbitration, and state-hardened workflows.
 
 ---
 
