@@ -123,6 +123,71 @@ OPEN → ACCEPTED → IN_PROGRESS → DELIVERED → COMPLETED
 
 ---
 
+## 🧱 System Architecture & Design
+
+Taskora is designed as a backend-first system with strict authority boundaries and state validation.
+
+### Core Design Principles
+- Backend is the single source of truth
+- Frontend never decides permissions
+- All task state transitions are centrally validated
+- Financial flows are escrow-based and dispute-safe
+
+## 💰 Escrow & Payment Design
+
+Taskora uses an escrow-based payment model to ensure fairness and trust.
+
+### Escrow Flow
+1. User creates a task → payment is LOCKED in escrow
+2. Runner accepts task → escrow is associated with runner
+3. Task delivered:
+   - User confirms → escrow RELEASED to runner
+   - User raises dispute → escrow FROZEN
+4. Admin resolves dispute:
+   - User wins → escrow REFUNDED
+   - Runner wins → escrow RELEASED
+
+This design prevents:
+- Early payouts
+- Double payments
+- Runner or user fraud
+
+
+## ⚖️ Dispute Resolution & Admin Arbitration
+
+Taskora supports real-world dispute handling.
+
+### Dispute Rules
+- Disputes can only be raised after task delivery
+- Once disputed, the task is locked from further actions
+- Escrow is frozen until resolution
+
+### Admin Role
+- Admin accounts are manually provisioned (no public admin signup)
+- Admins can:
+  - View all disputes, tasks, and escrows
+  - Resolve disputes in favor of user or runner
+- Admin decisions are final and enforced at backend level
+
+This mirrors real production systems where privileged roles are tightly controlled.
+
+
+## 🔄 Task State Machine & Safety
+
+Taskora enforces a hardened task lifecycle:
+
+OPEN → ACCEPTED → IN_PROGRESS → DELIVERED → COMPLETED  
+                                ↘ DISPUTE_RAISED
+
+### State Hardening
+- All state transitions are centrally validated
+- Illegal transitions are rejected (HTTP 409)
+- Cron jobs respect task state and disputes
+- Prevents accidental or malicious state corruption
+
+This ensures system consistency even under edge cases.
+
+
 ## 🔐 Authentication Flow
 
 1. User registers
